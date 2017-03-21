@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+#coding: utf-8
+require 'rubygems'
+require 'thor'
+require 'fileutils'
+require 'active_record'
+
+ActiveRecord::Base.establish_connection(
+  "adapter" =>"sqlite3",
+  "database" => "./npb.db"
+)
+
+class Hitter < ActiveRecord::Base
+end
+class Pitcher < ActiveRecord::Base
+end
+
+
+class BbAnalyze < Thor
+  desc 'top hitter hit num', '打者の安打数トップ１０を出力'
+  def hitterTop(num)
+    Hitter.order("hits desc").limit(num.to_i)
+       .map{|x|
+      puts "#{x.player_name}:#{x.hits.to_i}"
+    }
+  end
+end
+
+BbAnalyze.start
